@@ -1,34 +1,27 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="SSS Düzenle" :create="false">
+      <page-custom title="Bildirim Düzenle" :create="false">
         <v-form ref="form" v-model="valid">
           <v-row class="mx-5 d-flex flex-column">
             <v-col cols="12" lg="6" md="8" sm="12">
               <v-text-field
-                v-model="form.question"
-                :rules="rules.question"
+                v-model="form.title"
+                :rules="rules.title"
                 label="Başlık"
                 required
               ></v-text-field>
             </v-col>
             <v-col cols="12" lg="8" md="10" sm="12">
               <v-textarea
-                v-model="form.answer"
-                :rules="rules.answer"
+                v-model="form.content"
+                :rules="rules.content"
                 outlined
                 label="İçerik"
               ></v-textarea>
             </v-col>
-            <v-col cols="12" lg="3" md="4" sm="6">
-              <v-switch
-                v-model="form.status"
-                inset
-                label="Yayımlanma Durumu"
-              ></v-switch>
-            </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/sss">
+              <v-btn color="error" class="mx-5" to="/bildirimler">
                 İptal
               </v-btn>
               <v-btn color="primary" @click="submit">
@@ -58,19 +51,18 @@ export default {
       valid: false,
       error: false,
       rules: {
-        question: [
+        title: [
           v => !!v || 'Başlık alanını doldurunuz.',
           v => v.length >= 5 || 'Başlık alanı en az 5 karakter olmalıdır!',
         ],
-        answer: [
+        content: [
           v => !!v || 'İçerik alanını doldurunuz.',
           v => v.length >= 5 || 'İçerik alanı en az 5 karakter olmalıdır!',
         ],
       },
       form: {
-        question: '',
-        answer: '',
-        status: false
+        title: '',
+        content: '',
       }
     }
   },
@@ -80,14 +72,13 @@ export default {
     }),
   },
   async beforeMount() {
-    await this.getSSSById(this.$route.params.id)
-    this.form.question = this.updateData.question
-    this.form.answer = this.updateData.answer
-    this.form.status = this.updateData.status
+    await this.getNotfById(this.$route.params.id)
+    this.form.title = this.updateData.title
+    this.form.content = this.updateData.content
   },
   methods: {
     ...mapActions({
-      getSSSById: 'getSSSById',
+      getNotfById: 'getNotfById',
     }),
     async submit(){
       if (!this.valid){
@@ -96,7 +87,7 @@ export default {
         return false
       }
       // await this.addSSS(this.form)
-      await this.$router.push("/sss")
+      await this.$router.push("/bildirimler")
     }
   }
 }

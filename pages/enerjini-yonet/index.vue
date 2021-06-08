@@ -1,8 +1,8 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Haberler" :create="true">
-        <list-table :headers="headers" :items="news" />
+      <page-custom title="Enerjini Yönet" :create="true">
+        <list-table :headers="headers" :items="energyManagement" />
       </page-custom>
     </v-col>
   </v-row>
@@ -21,25 +21,29 @@ export default {
           align: 'start',
           value: 'title',
         },
-        { text: 'İçerik', value: 'content' },
-        { text: 'Dış Link', value: 'link' },
-        { text: 'Resim', value: 'image' },
+        { text: 'İkon', value: 'icon', sortable: false },
+        { text: 'Tüketim', value: 'consumption' },
+        { text: 'Günlük', value: 'daily' },
+        { text: 'Cihaz Adedi', value: 'qty' },
+        { text: 'Çalışma Süresi', value: 'work_time' },
+        { text: 'Haftalık Kullanım', value: 'weekly' },
+        { text: 'Yılda Kaç Ay', value: 'yearly' },
+        { text: 'Durum', value: 'status' },
         { text: 'İşlemler', value: 'operations', sortable: false, align: 'right' },
       ],
     }
   },
   computed: {
     ...mapState({
-      news: (state) => state.news,
+      energyManagement: (state) => state.energyManagement,
     }),
   },
   async beforeMount() {
-    await this.getListNews();
-    console.log(this.news);
+    await this.getEnergyItems();
   },
   methods: {
     ...mapActions({
-      getListNews: 'getListNews',
+      getEnergyItems: 'getEnergyItems',
     }),
   }
 }

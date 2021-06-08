@@ -9,7 +9,7 @@
                 <v-toolbar-title class="font-weight-bold">EDAŞ İçerik Yönetim Sistemi</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <v-form>
+                <v-form v-model="valid">
                   <v-text-field
                     v-model="email"
                     :rules="rules.email"
@@ -33,7 +33,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="submit">Giriş</v-btn>
+                <v-btn color="primary" @click="submit" :disabled="!valid">Giriş</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -47,6 +47,7 @@ export default {
   name: "login",
   data() {
     return {
+      valid: false,
       email: null,
       password: null,
       rules: {

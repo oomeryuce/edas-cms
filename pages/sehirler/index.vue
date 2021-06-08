@@ -1,8 +1,8 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Sıkça Sorulan Sorular(SSS)" :create="true">
-        <list-table :headers="headers" :items="sss" />
+      <page-custom title="Şehirler" :create="true">
+        <list-table :headers="headers" :items="cities" />
       </page-custom>
     </v-col>
   </v-row>
@@ -17,27 +17,28 @@ export default {
     return {
       headers: [
         {
-          text: 'Başlık',
+          text: 'Şehir Adı',
           align: 'start',
           value: 'title',
         },
-        { text: 'İçerik', value: 'content' },
+        { text: 'Resim', value: 'image' },
+        { text: 'Durum', value: 'status' },
         { text: 'İşlemler', value: 'operations', sortable: false, align: 'right' },
       ],
     }
   },
   computed: {
     ...mapState({
-      sss: (state) => state.sss,
+      cities: (state) => state.cities,
     }),
   },
   async beforeMount() {
-    await this.getListSSS();
-    console.log(this.sss);
+    await this.getListCity();
+    console.log(this.cities);
   },
   methods: {
     ...mapActions({
-      getListSSS: 'getListSSS',
+      getListCity: 'getListCity',
     }),
   }
 }

@@ -1,8 +1,8 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Sıkça Sorulan Sorular">
-        <list-table :headers="headers" :items="desserts" />
+      <page-custom title="Sıkça Sorulan Sorular(SSS)" :create="true">
+        <list-table :headers="headers" :items="sss" />
       </page-custom>
     </v-col>
   </v-row>
@@ -10,37 +10,36 @@
 <script>
 import PageCustom from "@/components/PageCustom";
 import ListTable from "@/components/ListTable";
+import { mapActions, mapState } from 'vuex'
 export default {
   components: { PageCustom, ListTable },
   data () {
     return {
       headers: [
         {
-          text: 'Başlık',
+          text: 'Soru',
           align: 'start',
-          value: 'title',
+          value: 'question',
         },
-        { text: 'İçerik', value: 'content' },
+        { text: 'Cevap', value: 'answer' },
+        { text: 'Durum', value: 'status' },
         { text: 'İşlemler', value: 'operations', sortable: false, align: 'right' },
       ],
-      desserts: [
-        {
-          id: 1,
-          title: 'Test 1',
-          content: 'Test 1 Content',
-        },
-        {
-          id: 2,
-          title: 'Test 2',
-          content: 'Test 2 Content',
-        },
-        {
-          id: 3,
-          title: 'Test 3',
-          content: 'Test 3 Content',
-        },
-      ]
     }
+  },
+  computed: {
+    ...mapState({
+      sss: (state) => state.sss,
+    }),
+  },
+  async beforeMount() {
+    await this.getListSSS();
+    console.log(this.sss);
+  },
+  methods: {
+    ...mapActions({
+      getListSSS: 'getListSSS',
+    }),
   }
 }
 </script>

@@ -15,7 +15,19 @@
           router
           exact
         >
-          <v-list-item-action>
+          <v-tooltip
+            v-if="miniVariant"
+            color="primary"
+            right
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-list-item-action>
+                  <v-icon v-bind="attrs" v-on="on">{{ item.icon }}</v-icon>
+              </v-list-item-action>
+            </template>
+            <span>{{ item.title }}</span>
+          </v-tooltip>
+          <v-list-item-action v-else>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
@@ -26,8 +38,18 @@
       <template v-slot:append>
         <div class="pa-2">
           <v-btn block color="error" to="/login">
-            <v-icon>mdi-logout</v-icon>
-            Çıkış Yap
+            <v-tooltip
+              v-if="miniVariant"
+              color="error"
+              right
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on">mdi-logout</v-icon>
+              </template>
+              <span>Çıkış Yap</span>
+            </v-tooltip>
+            <v-icon v-else>mdi-logout</v-icon>
+            <span v-show="!miniVariant">Çıkış Yap</span>
           </v-btn>
         </div>
       </template>
@@ -38,6 +60,9 @@
       fixed
       app
     >
+      <v-btn icon @click="drawer = !drawer">
+        <v-icon color="white">mdi-menu</v-icon>
+      </v-btn>
       <v-btn
         icon
         @click.stop="miniVariant = !miniVariant"
@@ -53,7 +78,7 @@
       :absolute="!fixed"
       app
     >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <span>&copy; {{ new Date().getFullYear() }}<a href="https://www.pikselmutfak.com" target="_blank" class="ml-2">Piksel Mutfak</a></span>
     </v-footer>
   </v-app>
 </template>
@@ -71,14 +96,34 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-home-circle',
-          title: 'Anasayfa',
+          icon: 'mdi-view-dashboard',
+          title: 'Dashboard',
           to: '/'
         },
         {
-          icon: 'mdi-help-circle',
+          icon: 'mdi-help',
           title: 'Sıkça Sorulan Sorular',
-          to: '/SSS'
+          to: '/sss'
+        },
+        {
+          icon: 'mdi-newspaper-variant',
+          title: 'Haberler',
+          to: '/haberler'
+        },
+        {
+          icon: 'mdi-flash',
+          title: 'Enerjini Yönet',
+          to: '/enerjini-yonet'
+        },
+        {
+          icon: 'mdi-city',
+          title: 'Şehirler',
+          to: '/sehirler'
+        },
+        {
+          icon: 'mdi-bell-ring',
+          title: 'Bildirimler',
+          to: '/bildirimler'
         }
       ],
       miniVariant: false,

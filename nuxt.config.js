@@ -10,7 +10,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - edas-cms2',
-    title: 'edas-cms2',
+    title: 'Edaş İleti Yönetim Sistemi',
     htmlAttrs: {
       lang: 'en'
     },

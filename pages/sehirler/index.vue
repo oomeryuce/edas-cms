@@ -2,7 +2,7 @@
   <v-row>
     <v-col>
       <page-custom title="Şehirler" :create="true">
-        <list-table :headers="headers" :items="cities" />
+        <list-table :headers="headers" :items="cities" @delete-action="deleteAction"/>
       </page-custom>
     </v-col>
   </v-row>
@@ -39,7 +39,11 @@ export default {
   methods: {
     ...mapActions({
       getListCity: 'getListCity',
+      deleteCity: 'deleteCity',
     }),
+    async deleteAction(id){
+      await this.deleteCity(id)
+    }
   }
 }
 </script>

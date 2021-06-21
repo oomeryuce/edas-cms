@@ -30,6 +30,14 @@
                     required
                   ></v-text-field>
                 </v-form>
+                <v-alert
+                  v-if="error"
+                  border="left"
+                  type="error"
+                  color="red lighten-2"
+                >
+                  {{error}}
+                </v-alert>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -50,6 +58,7 @@ export default {
       valid: false,
       email: null,
       password: null,
+      error: null,
       rules: {
         email: [
           v => !!v || 'E-mail adresinizi giriniz!',
@@ -64,18 +73,17 @@ export default {
   methods: {
     async submit() {
       console.log([this.email, this.password])
-      await this.$router.push('/')
-      /*try {
+      try {
         await this.$auth.loginWith('local', {
           data: {
-            email: this.form.email,
-            password: this.form.password
+            username: this.email,
+            password: this.password
           },
         })
         await this.$router.push('/')
       } catch (e) {
         this.error = e.response.data.message
-      }*/
+      }
     }
   }
 }

@@ -21,10 +21,10 @@
               ></v-textarea>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/bildirimler">
+              <v-btn color="error" class="mx-5" to="/bildirimler" :loading="loading">
                 İptal
               </v-btn>
-              <v-btn color="primary" @click="submit">
+              <v-btn color="primary" @click="submit" :loading="loading">
                 Kaydet
               </v-btn>
             </v-col>
@@ -48,6 +48,7 @@ import { mapActions, mapState } from "vuex";
 export default {
   data () {
     return {
+      loading: false,
       valid: false,
       error: false,
       rules: {
@@ -74,15 +75,18 @@ export default {
   },
   methods: {
     ...mapActions({
-      //addSSS: 'addSSS',
+      addNotf: 'addNotf',
     }),
     async submit(){
+      this.loading = true
       if (!this.valid){
         this.$refs.form.validate()
         this.error = true
+        this.loading = false
         return false
       }
-      // await this.addSSS(this.form)
+      await this.addNotf(this.form)
+      this.loading = false
       await this.$router.push("/bildirimler")
     }
   }

@@ -7,7 +7,7 @@
       fixed
       app
     >
-      <v-list>
+      <v-list class="fill-height">
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -36,7 +36,7 @@
         </v-list-item>
       </v-list>
       <template v-slot:append>
-        <div class="pa-2">
+        <div class="pa-2 py-5">
           <v-btn block color="error" to="/login">
             <v-tooltip
               v-if="miniVariant"
@@ -49,7 +49,7 @@
               <span>Çıkış Yap</span>
             </v-tooltip>
             <v-icon v-else>mdi-logout</v-icon>
-            <span v-show="!miniVariant">Çıkış Yap</span>
+            <span v-show="!miniVariant" @click="logout">Çıkış Yap</span>
           </v-btn>
         </div>
       </template>
@@ -84,11 +84,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 export default {
-  computed: {
-    ...mapGetters(['isAuthenticated'])
-  },
+  middleware: 'auth',
   data () {
     return {
       clipped: true,
@@ -131,6 +128,11 @@ export default {
       rightDrawer: false,
       title: 'EDAŞ İçerik Yönetim Sistemi'
     }
+  },
+  methods: {
+    async logout() {
+      await this.$auth.logout();
+    },
   }
 }
 </script>

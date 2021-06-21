@@ -9,7 +9,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - edas-cms2',
+    titleTemplate: 'Edaş IYS',
     title: 'Edaş İleti Yönetim Sistemi',
     htmlAttrs: {
       lang: 'en'
@@ -70,19 +70,29 @@ export default {
   },
 
   axios: {
-    baseURL: '127.0.0.1:3333/api'
+    baseURL: process.env.BASE_URL
+    //cmsapi.coruhedas.com.tr || https://cmsapi.firatedas.com.tr
   },
 
   auth: {
-    local: {
-      endpoints: {
-        login: { url: 'login', method: 'post', propertyName: 'data.token' },
-        logout: false
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/Users/authenticate', method: 'post', propertyName: 'data.token' },
+          //user: { url: '/Users/Me', method: 'get', propertyName: 'data' },
+          user: false,
+          logout: false
+        }
       }
     }
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend (config, { isDev, isClient }) {
+      config.node = {
+        fs: "empty"
+      }
+    }
   }
 }

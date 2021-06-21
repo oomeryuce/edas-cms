@@ -1,14 +1,16 @@
 <template>
   <v-app dark>
-    <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
-    </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <NuxtLink to="/">
-      Home page
-    </NuxtLink>
+    <v-row class="d-flex flex-column text-center align-center justify-center" style="background-color: #1665c0">
+      <h1 class="display-1 white--text" v-if="error.statusCode === 404">
+        <strong>{{ pageNotFound }}</strong>
+      </h1>
+      <h1 v-else class="display-1 white--text">
+        <strong>{{ otherError }}</strong>
+      </h1>
+      <v-btn x-large to="/" color="white" class="mt-3" style="width: 20%">
+        Anasayfa'ya Dön
+      </v-btn>
+    </v-row>
   </v-app>
 </template>
 
@@ -23,8 +25,8 @@ export default {
   },
   data () {
     return {
-      pageNotFound: '404 Not Found',
-      otherError: 'An error occurred'
+      pageNotFound: 'Sayfa Bulunamadı!',
+      otherError: 'Bir hata oluştu.'
     }
   },
   head () {

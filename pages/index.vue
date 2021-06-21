@@ -8,7 +8,7 @@
         <v-row>
           <v-col
             v-for="item in items"
-            :key="item"
+            :key="item.order"
             cols="12"
             md="3"
           >
@@ -46,21 +46,25 @@ export default {
     return{
       items: [
         {
+          order: 0,
           icon: 'mdi-help',
           title: 'Sıkça Sorulan Sorular',
           to: '/sss'
         },
         {
+          order: 1,
           icon: 'mdi-newspaper-variant',
           title: 'Haberler',
           to: '/haberler'
         },
         {
+          order: 2,
           icon: 'mdi-flash',
           title: 'Enerjini Yönet',
           to: '/enerjini-yonet'
         },
         {
+          order: 3,
           icon: 'mdi-city',
           title: 'Şehirler',
           to: '/sehirler'

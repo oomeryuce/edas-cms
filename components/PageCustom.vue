@@ -1,7 +1,7 @@
 <template>
   <main>
     <v-row>
-      <v-col cols="12" lg="10" md="10" sm="12">
+      <v-col cols="12" :lg="full ? 12 : 10" :md="full ? 12 : 10" sm="12">
         <v-card elevation="2" class="mx-10 my-10">
           <v-card-title class="d-flex justify-space-between blue darken-3 white--text">
             <span>
@@ -19,7 +19,7 @@
 </template>
 <script>
 export default {
-  props: ['title', 'create'],
+  props: ['title', 'create', 'full'],
   data: () => ({
     items: [
       {

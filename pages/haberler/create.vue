@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Yeni Haber Ekle" :create="false">
+      <page-custom title="Yeni Haber Ekle" :create="false">{{  }}
         <v-form ref="form" v-model="valid">
           <v-row class="mx-5 d-flex flex-column">
             <v-col cols="12" lg="6" md="8" sm="12">
@@ -29,7 +29,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" lg="6" md="8" sm="12" class="d-flex px-0">
-              <v-col cols="12" lg="8" md="10" sm="12">
+              <v-col cols="12" lg="8" md="10" sm="12" class="d-flex flex-column">
                 <v-file-input
                   v-model="form.image"
                   :rules="rules.image"
@@ -40,6 +40,8 @@
                   @change="createUrl"
                   label="Resim"
                 ></v-file-input>
+                <small class="text--secondary">*Resim boyutu 400x100 72 dpi olmalıdır.</small>
+                <small class="text--secondary">*Maksimum resim boyutu 10MB.</small>
               </v-col>
               <v-col cols="12" lg="4" md="2" sm="12">
                 <v-img max-width="150" v-show="form.image" :src="url" transition="scale-transition"></v-img>
@@ -53,10 +55,10 @@
               ></v-switch>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/haberler">
+              <v-btn color="error" class="mx-5" to="/haberler" :loading="loading">
                 İptal
               </v-btn>
-              <v-btn color="primary" @click="submit">
+              <v-btn color="primary" @click="submit" :loading="loading">
                 Kaydet
               </v-btn>
             </v-col>
@@ -80,6 +82,7 @@ import { mapActions, mapState } from "vuex";
 export default {
   data () {
     return {
+      loading: false,
       valid: false,
       url: null,
       error: false,
@@ -96,35 +99,56 @@ export default {
           v => !!v || 'Dış Link alanını doldurunuz.',
           v => v.length >= 5 || 'Dış Link alanı en az 5 karakter olmalıdır!',
         ],
-        image: [
+        /*image: [
           v => v || 'Lütfen Resim alanını doldurunuz.',
           v => !v || v.size < 10000000 || 'Resim 10MB dan büyük olamaz.',
-        ],
+        ],*/
       },
       form: {
         title: '',
         content: '',
         link: '',
-        image: null,
+        image: '',
         status: false
       }
     }
   },
   methods: {
     ...mapActions({
-      addSSS: 'addSSS',
+      addNews: 'addNews',
     }),
     createUrl(file){
       if (file) {
         this.url = URL.createObjectURL(file)
+        let img = new Image()
+        img.src = URL.createObjectURL(file)
+        img.onload = () => {
+          if (img.width / img.height === 4) {
+            return true;
+          }
+          this.valid = false
+          alert("Resmin Genişlik / Yükseklik oranı 4(örn. 400x100) olmalıdır.");
+          return true;
+        }
       }
     },
     async submit(){
+      this.loading = true
       if (!this.valid){
         this.$refs.form.validate()
         this.error = true
+        this.loading = false
         return false
       }
+      let payload = {
+        title: this.form.title,
+        contentHtml: this.form.content,
+        pictureUri: this.form.image,
+        link: this.form.link,
+        createDate: new Date().toISOString()
+      }
+      await this.addNews(payload)
+      this.loading = false
       await this.$router.push("/haberler")
     }
   }

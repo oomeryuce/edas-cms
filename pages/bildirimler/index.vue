@@ -2,12 +2,12 @@
   <v-row>
     <v-col>
       <page-custom title="Bildirimler" :create="true">
-        <list-table :headers="headers" :items="notifications" >
+        <list-table :headers="headers" :items="notifications" @delete-action="deleteAction">
           <template v-slot:operations="{ item }">
-            <v-btn color="primary" @click="openModal(item)" small :disabled="item.sentDate && item.sentDate.length > 0">
+            <v-btn color="primary" @click="openModal(item)" small :disabled="item.sentDate && item.sentDate.length > 0" class="mr-2">
               Gönder
             </v-btn>
-            <v-btn color="purple" class="white--text" @click="duplicate(item)" small>
+            <v-btn color="purple" class="white--text mr-2" @click="duplicate(item)" small>
               Çoğalt
             </v-btn>
           </template>
@@ -88,6 +88,7 @@ export default {
   methods: {
     ...mapActions({
       getListNotf: 'getListNotf',
+      deleteNotf: 'deleteNotf',
     }),
     openModal(item){
       this.modalData.item.name = item.title
@@ -102,6 +103,9 @@ export default {
           content: item.content,
         },
       })
+    },
+    async deleteAction(id){
+      await this.deleteNotf(id)
     }
   }
 }

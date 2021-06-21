@@ -13,7 +13,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" lg="6" md="8" sm="12" class="d-flex px-0">
-              <v-col cols="12" lg="8" md="10" sm="12">
+              <v-col cols="12" lg="8" md="10" sm="12" class="d-flex flex-column">
                 <v-file-input
                   v-model="form.image"
                   :rules="rules.image"
@@ -24,9 +24,11 @@
                   @change="createUrl"
                   label="Resim"
                 ></v-file-input>
+                <small class="text--secondary">*Resim boyutu 70x70 72 dpi olmalıdır.</small>
+                <small class="text--secondary">*Maksimum resim boyutu 10MB.</small>
               </v-col>
               <v-col cols="12" lg="4" md="2" sm="12">
-                <v-img max-width="150" v-show="form.image" :src="url" transition="scale-transition"></v-img>
+                <v-img max-width="150" v-show="form.image" id="image" :src="url" transition="scale-transition"></v-img>
               </v-col>
             </v-col>
             <v-col cols="12" lg="3" md="4" sm="6">
@@ -37,10 +39,10 @@
               ></v-switch>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/sehirler">
+              <v-btn color="error" class="mx-5" to="/sehirler" :loading="loading">
                 İptal
               </v-btn>
-              <v-btn color="primary" @click="submit">
+              <v-btn color="primary" @click="submit" :loading="loading">
                 Kaydet
               </v-btn>
             </v-col>
@@ -64,8 +66,10 @@ import { mapActions, mapState } from "vuex";
 export default {
   data () {
     return {
+      loading: false,
       valid: false,
       url: null,
+      isOk: false,
       error: false,
       rules: {
         title: [
@@ -86,21 +90,38 @@ export default {
   },
   methods: {
     ...mapActions({
-      //addSSS: 'addSSS',
+      addCity: 'addCity',
     }),
     createUrl(file){
       if (file) {
         this.url = URL.createObjectURL(file)
+        let img = new Image()
+        img.src = URL.createObjectURL(file)
+        img.onload = () => {
+          if (img.width / img.height === 1) {
+            return true;
+          }
+          this.valid = false
+          alert("Resmin Genişlik ve Yüksekliği eşit(kare resim) olmalıdır.");
+          return true;
+        }
       }
+      return this.isOk
     },
     async submit(){
+      this.loading = true
+      this.$refs.form.validate()
       if (!this.valid){
-        this.$refs.form.validate()
         this.error = true
+        this.loading = false
         return false
       }
-      // await this.addSSS(this.form)
+      await this.addCity(this.form)
+      this.loading = false
       await this.$router.push("/sehirler")
+    },
+    setIsOk(value){
+      this.isOk = value
     }
   }
 }

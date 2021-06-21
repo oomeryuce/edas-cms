@@ -1,8 +1,15 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Sıkça Sorulan Sorular(SSS)" :create="true">
-        <list-table :headers="headers" :items="sss" />
+      <page-custom title="Sıkça Sorulan Sorular(SSS)" :create="true" :full="false">
+        <div v-if="!sss" class="pa-5 d-flex justify-center">
+          <v-skeleton-loader
+            class="mx-auto"
+            width="90%"
+            type="table-heading, list-item-two-line, table-tfoot"
+          ></v-skeleton-loader>
+        </div>
+        <list-table v-else :headers="headers" :items="sss" @delete-action="deleteAction"/>
       </page-custom>
     </v-col>
   </v-row>
@@ -16,6 +23,7 @@ export default {
   data () {
     return {
       headers: [
+        { text: 'Kategori', value: 'sTypeName', sortable: false },
         {
           text: 'Soru',
           align: 'start',
@@ -32,14 +40,17 @@ export default {
       sss: (state) => state.sss,
     }),
   },
-  async beforeMount() {
+  async mounted() {
     await this.getListSSS();
-    console.log(this.sss);
   },
   methods: {
     ...mapActions({
       getListSSS: 'getListSSS',
+      deleteSSS: 'deleteSSS',
     }),
+    async deleteAction(id){
+      await this.deleteSSS(id)
+    },
   }
 }
 </script>

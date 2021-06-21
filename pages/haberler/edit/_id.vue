@@ -29,7 +29,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" lg="6" md="8" sm="12" class="d-flex px-0">
-              <v-col cols="12" lg="8" md="10" sm="12">
+              <v-col cols="12" lg="8" md="10" sm="12" class="d-flex flex-column">
                 <v-file-input
                   v-model="form.image"
                   :rules="rules.image"
@@ -40,6 +40,8 @@
                   @change="createUrl"
                   label="Resim"
                 ></v-file-input>
+                <small class="text--secondary">*Resim boyutu 400x100 72 dpi olmalıdır.</small>
+                <small class="text--secondary">*Maksimum resim boyutu 10MB.</small>
               </v-col>
               <v-col cols="12" lg="4" md="2" sm="12">
                 <v-img max-width="150" v-show="form.image" :src="url" transition="scale-transition"></v-img>
@@ -53,10 +55,10 @@
               ></v-switch>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/haberler">
+              <v-btn color="error" class="mx-5" to="/haberler" :loading="loading">
                 İptal
               </v-btn>
-              <v-btn color="primary" @click="submit">
+              <v-btn color="primary" @click="submit" :loading="loading">
                 Kaydet
               </v-btn>
             </v-col>
@@ -80,6 +82,7 @@ import { mapActions, mapState } from "vuex";
 export default {
   data () {
     return {
+      loading: false,
       valid: false,
       url: null,
       error: false,
@@ -96,12 +99,13 @@ export default {
           v => !!v || 'Dış Link alanını doldurunuz.',
           v => v.length >= 5 || 'Dış Link alanı en az 5 karakter olmalıdır.',
         ],
-        image: [
+        /*image: [
           v => v || 'Lütfen Resim alanını doldurunuz.',
           v => !v || v.size < 10000000 || 'Resim 10MB dan büyük olamaz.',
-        ],
+        ],*/
       },
       form: {
+        id: this.$route.params.id,
         title: '',
         content: '',
         link: '',
@@ -118,26 +122,47 @@ export default {
   async beforeMount() {
     await this.getNewsById(this.$route.params.id)
     this.form.title = this.updateData.title
-    this.form.content = this.updateData.content
+    this.form.content = this.updateData.contentHtml
     this.form.link = this.updateData.link
-    this.form.image = this.updateData.image
+    this.form.image = this.updateData.pictureUri
     this.form.status = this.updateData.status
   },
   methods: {
     ...mapActions({
       getNewsById: 'getNewsById',
+      updateNews: 'updateNews',
     }),
     createUrl(file){
       if (file) {
         this.url = URL.createObjectURL(file)
+        let img = new Image()
+        img.src = URL.createObjectURL(file)
+        img.onload = () => {
+          if (img.width / img.height === 4) {
+            return true;
+          }
+          this.valid = false
+          alert("Resmin Genişlik / Yükseklik oranı 4(örn. 400x100) olmalıdır.");
+          return true;
+        }
       }
     },
     async submit(){
+      this.loading = true
       if (!this.valid){
         this.$refs.form.validate()
         this.error = true
         return false
       }
+      let payload = {
+        id: this.form.id,
+        title: this.form.title,
+        contentHtml: this.form.content,
+        pictureUri: 'test.jpeg',
+        link: this.form.link
+      }
+      await this.updateNews(payload)
+      this.loading = false
       await this.$router.push("/haberler")
     }
   }

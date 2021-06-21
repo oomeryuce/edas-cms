@@ -2,7 +2,8 @@
 <script>
 export default {
   layout: 'login',
-  name: "index"
+  name: "index",
+  middleware: 'guest',
 }
 </script>
 <style scoped>

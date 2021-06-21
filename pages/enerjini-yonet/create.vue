@@ -13,20 +13,22 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" lg="6" md="8" sm="12" class="d-flex">
-              <v-col cols="12" lg="8" md="10" sm="12" class="pl-0">
+              <v-col cols="12" lg="8" md="10" sm="12" class="pl-0 d-flex flex-column">
                 <v-file-input
                   v-model="form.icon"
                   :rules="rules.icon"
                   show-size
-                  accept="image/png, image/jpeg, image/bmp"
+                  accept="image/png, image/jpeg"
                   placeholder="Bir Resim Seçin"
                   prepend-icon="mdi-camera"
                   @change="createUrl"
                   label="İkon"
                 ></v-file-input>
+                <small class="text--secondary">*Resim boyutu 400x100 72 dpi olmalıdır.</small>
+                <small class="text--secondary">*Maksimum resim boyutu 10MB.</small>
               </v-col>
               <v-col cols="12" lg="4" md="2" sm="12">
-                <v-img max-width="150" v-show="form.icon" :src="url" transition="scale-transition"></v-img>
+                <v-img max-width="150" v-show="url" :src="url" transition="scale-transition"></v-img>
               </v-col>
             </v-col>
             <v-row class="px-3">
@@ -38,30 +40,31 @@
                   min="0"
                   step=".1"
                   label="Tüketim"
-                  suffix="kW/s"
+                  suffix="W"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" lg="2" md="3" sm="4">
                 <v-text-field
-                  v-model="form.daily"
-                  :rules="rules.daily"
+                  v-model="form.hourly"
+                  :rules="rules.hourly"
                   type="number"
                   min="0"
                   step=".1"
-                  label="Günlük Tüketim"
-                  suffix="kW/s"
+                  label="Saatlik Tüketim"
+                  suffix="kWh"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" lg="2" md="3" sm="4">
                 <v-text-field
-                  v-model="form.qty"
-                  :rules="rules.qty"
+                  v-model="form.hourlyCost"
+                  :rules="rules.hourlyCost"
                   type="number"
                   min="0"
-                  label="Cihaz Adedi"
-                  suffix="Adet"
+                  step=".1"
+                  label="Saatlik Tüketim"
+                  suffix="₺"
                   required
                 ></v-text-field>
               </v-col>
@@ -73,7 +76,7 @@
                   :rules="rules.work_time"
                   type="number"
                   min="0"
-                  label="Çalışma Süresi"
+                  label="Günde Kaç Saat"
                   suffix="Saat"
                   required
                 ></v-text-field>
@@ -84,7 +87,7 @@
                   :rules="rules.weekly"
                   type="number"
                   min="0"
-                  label="Haftalık Kullanım"
+                  label="Haftada Kaç Gün"
                   suffix="Gün"
                   required
                 ></v-text-field>
@@ -109,10 +112,10 @@
               ></v-switch>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/enerjini-yonet">
+              <v-btn color="error" class="mx-5" to="/enerjini-yonet" :loading="loading">
                 İptal
               </v-btn>
-              <v-btn color="primary" @click="submit">
+              <v-btn color="primary" @click="submit" :loading="loading">
                 Kaydet
               </v-btn>
             </v-col>
@@ -132,10 +135,10 @@
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
-
 export default {
   data () {
     return {
+      loading: false,
       valid: false,
       url: null,
       error: false,
@@ -152,11 +155,11 @@ export default {
           v => !!v || 'Tüketim alanını doldurunuz.',
           v => v > 0 || 'Tüketim 0 dan büyük olmalıdır.',
         ],
-        daily: [
+        hourly: [
           v => !!v || 'Günlük Tüketim alanını doldurunuz.',
           v => v > 0 || 'Günlük tüketim 0 dan büyük olmalıdır.',
         ],
-        qty: [
+        hourlyCost: [
           v => !!v || 'Cihaz Adedi alanını doldurunuz.',
           v => v > 0 || 'Cihaz Adedi 0 dan büyük olmalıdır.',
         ],
@@ -177,8 +180,8 @@ export default {
         title: '',
         icon: null,
         consumption: null,
-        daily: null,
-        qty: null,
+        hourly: null,
+        hourlyCost: null,
         work_time: null,
         weekly: null,
         yearly: null,
@@ -186,21 +189,53 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      uploadedImage: (state) => state.uploadedImage,
+    }),
+  },
   methods: {
     ...mapActions({
-      //addSSS: 'addSSS',
+      addEnergyModel: 'addEnergyModel',
+      uploadImage: 'uploadImage',
     }),
-    createUrl(file){
+    async createUrl(file) {
       if (file) {
         this.url = URL.createObjectURL(file)
+        let img = new Image()
+        img.src = URL.createObjectURL(file)
+        img.onload = () => {
+          if (img.width / img.height === 1) {
+            return true;
+          }
+          this.valid = false
+          alert("Resmin Genişlik ve Yüksekliği eşit(kare resim) olmalıdır.");
+          return true;
+        }
       }
     },
     async submit(){
+      this.loading = true
       if (!this.valid){
         this.$refs.form.validate()
         this.error = true
+        this.loading = false
         return false
       }
+
+      let payload = {
+        name : this.form.title,
+        iconUri: await this.uploadedImage.name,
+        tuketimW: this.form.consumption,
+        saatlikTuketim: this.form.hourly,
+        saatlikTuketimTL: this.form.hourlyCost,
+        calismaSuresiSaat: this.form.work_time,
+        haftalikKullanilanGun: this.form.weekly,
+        yildaKullanilanAy: this.form.yearly,
+        status: this.form.status
+      }
+      await this.addEnergyModel(payload)
+      this.loading = false
       await this.$router.push("/enerjini-yonet")
     }
   }

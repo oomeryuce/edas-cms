@@ -20,6 +20,17 @@
                 label="Cevap"
               ></v-textarea>
             </v-col>
+            <v-col cols="12" lg="6" md="8" sm="12">
+              <v-select
+                v-model="form.sType"
+                :items="sTypes"
+                :rules="rules.sType"
+                no-data-text="Data bulunamadı"
+                item-value="id"
+                item-text="sTypeName"
+                label="Soru Kategorisi"
+              ></v-select>
+            </v-col>
             <v-col cols="12" lg="3" md="4" sm="6">
               <v-switch
                 v-model="form.status"
@@ -28,10 +39,10 @@
               ></v-switch>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
-              <v-btn color="error" class="mx-5" to="/sss">
+              <v-btn color="error" class="mx-5" to="/sss" :loading="loading">
                 İptal
               </v-btn>
-              <v-btn color="primary" @click="submit">
+              <v-btn color="primary" @click="submit" :loading="loading">
                 Kaydet
               </v-btn>
             </v-col>
@@ -55,6 +66,7 @@ import { mapActions, mapState } from "vuex";
 export default {
   data () {
     return {
+      loading: false,
       valid: false,
       error: false,
       rules: {
@@ -66,36 +78,57 @@ export default {
           v => !!v || 'Cevap alanını doldurunuz.',
           v => v.length >= 5 || 'Cevap alanı en az 5 karakter olmalıdır!',
         ],
+        sType: [
+          v => !!v || 'Bir kategori seçiniz.',
+        ],
       },
       form: {
         question: '',
         answer: '',
-        status: false
+        status: false,
+        sType: null
       }
     }
   },
   computed: {
     ...mapState({
       updateData: (state) => state.updateData,
+      sTypes: (state) => state.sTypes,
     }),
   },
   async beforeMount() {
+    await this.getSTypes()
     await this.getSSSById(this.$route.params.id)
-    this.form.question = this.updateData.question
-    this.form.answer = this.updateData.answer
-    this.form.status = this.updateData.status
+    console.log(this.updateData)
+    this.form.question = await this.updateData.question
+    this.form.answer = await this.updateData.answer
+    this.form.status = await this.updateData.status
+    this.form.sType = await this.updateData.sTypeId
   },
   methods: {
     ...mapActions({
       getSSSById: 'getSSSById',
+      updateSSS: 'updateSSS',
+      getSTypes: 'getSTypes',
     }),
     async submit(){
+      this.loading = true
       if (!this.valid){
         this.$refs.form.validate()
         this.error = true
+        this.loading = false
         return false
       }
-      // await this.addSSS(this.form)
+      let payload= {
+        id: this.$route.params.id,
+        question: this.form.question,
+        answer: this.form.answer,
+        sTypeId: this.form.sType,
+        status: this.form.status,
+        company: process.env.NUXT_ENV_COMPANY
+      }
+      await this.updateSSS(payload)
+      this.loading = false
       await this.$router.push("/sss")
     }
   }

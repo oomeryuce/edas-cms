@@ -99,10 +99,10 @@ export default {
           v => !!v || 'Dış Link alanını doldurunuz.',
           v => v.length >= 5 || 'Dış Link alanı en az 5 karakter olmalıdır!',
         ],
-        /*image: [
+        image: [
           v => v || 'Lütfen Resim alanını doldurunuz.',
           v => !v || v.size < 10000000 || 'Resim 10MB dan büyük olamaz.',
-        ],*/
+        ],
       },
       form: {
         title: '',
@@ -113,12 +113,23 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      uploadedImage: (state) => state.uploadedImage,
+    }),
+  },
   methods: {
     ...mapActions({
       addNews: 'addNews',
+      uploadImage: 'uploadImage',
     }),
     createUrl(file){
       if (file) {
+        let data = new FormData();
+        data.append('uploadType', "1");
+        data.append('file', file);
+        this.uploadImage(data)
+
         this.url = URL.createObjectURL(file)
         let img = new Image()
         img.src = URL.createObjectURL(file)
@@ -126,7 +137,6 @@ export default {
           if (img.width / img.height === 4) {
             return true;
           }
-          this.valid = false
           alert("Resmin Genişlik / Yükseklik oranı 4(örn. 400x100) olmalıdır.");
           return true;
         }
@@ -143,9 +153,10 @@ export default {
       let payload = {
         title: this.form.title,
         contentHtml: this.form.content,
-        pictureUri: this.form.image,
+        pictureUri: this.uploadedImage,
         link: this.form.link,
-        createDate: new Date().toISOString()
+        createDate: new Date().toISOString(),
+        status: this.form.status
       }
       await this.addNews(payload)
       this.loading = false

@@ -99,10 +99,10 @@ export default {
           v => !!v || 'Dış Link alanını doldurunuz.',
           v => v.length >= 5 || 'Dış Link alanı en az 5 karakter olmalıdır.',
         ],
-        /*image: [
+        image: [
           v => v || 'Lütfen Resim alanını doldurunuz.',
           v => !v || v.size < 10000000 || 'Resim 10MB dan büyük olamaz.',
-        ],*/
+        ],
       },
       form: {
         id: this.$route.params.id,
@@ -117,6 +117,7 @@ export default {
   computed: {
     ...mapState({
       updateData: (state) => state.updateData,
+      uploadedImage: (state) => state.uploadedImage,
     }),
   },
   async beforeMount() {
@@ -131,9 +132,15 @@ export default {
     ...mapActions({
       getNewsById: 'getNewsById',
       updateNews: 'updateNews',
+      uploadImage: 'uploadImage',
     }),
     createUrl(file){
       if (file) {
+        let data = new FormData();
+        data.append('uploadType', "1");
+        data.append('file', file);
+        this.uploadImage(data)
+
         this.url = URL.createObjectURL(file)
         let img = new Image()
         img.src = URL.createObjectURL(file)
@@ -141,7 +148,6 @@ export default {
           if (img.width / img.height === 4) {
             return true;
           }
-          this.valid = false
           alert("Resmin Genişlik / Yükseklik oranı 4(örn. 400x100) olmalıdır.");
           return true;
         }
@@ -158,8 +164,9 @@ export default {
         id: this.form.id,
         title: this.form.title,
         contentHtml: this.form.content,
-        pictureUri: 'test.jpeg',
-        link: this.form.link
+        pictureUri: this.uploadedImage ? this.uploadedImage : this.form.image,
+        link: this.form.link,
+        status: this.form.status
       }
       await this.updateNews(payload)
       this.loading = false

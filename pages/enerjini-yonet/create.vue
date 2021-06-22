@@ -201,6 +201,11 @@ export default {
     }),
     async createUrl(file) {
       if (file) {
+        let data = new FormData();
+        data.append('uploadType', "0");
+        data.append('file', file);
+        await this.uploadImage(data)
+
         this.url = URL.createObjectURL(file)
         let img = new Image()
         img.src = URL.createObjectURL(file)
@@ -208,7 +213,6 @@ export default {
           if (img.width / img.height === 1) {
             return true;
           }
-          this.valid = false
           alert("Resmin Genişlik ve Yüksekliği eşit(kare resim) olmalıdır.");
           return true;
         }
@@ -225,7 +229,7 @@ export default {
 
       let payload = {
         name : this.form.title,
-        iconUri: await this.uploadedImage.name,
+        iconUri: this.uploadedImage,
         tuketimW: this.form.consumption,
         saatlikTuketim: this.form.hourly,
         saatlikTuketimTL: this.form.hourlyCost,

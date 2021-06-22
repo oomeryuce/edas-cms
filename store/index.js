@@ -46,6 +46,7 @@ export const actions = {
       if (response.data.isSuccess){
         await commit('setSSS', response.data.entityData)
       } else {
+        alert(response.data.message)
         await commit('setSSS', [])
       }
     }catch( err ) {
@@ -57,6 +58,9 @@ export const actions = {
       const response = await this.$axios.get('/Sss/GetSssTypes')
       if (response.data.isSuccess){
         await commit('setSTypes', response.data.entityData)
+      } else {
+        alert(response.data.message)
+        await commit('setSTypes', [])
       }
     }catch( err ) {
       alert(err)
@@ -68,6 +72,7 @@ export const actions = {
       if (response.data.isSuccess){
         await commit('setNews', response.data.entityData)
       } else {
+        alert(response.data.message)
         await commit('setNews', [])
       }
     }catch( err ) {
@@ -80,6 +85,7 @@ export const actions = {
       if (response.data.isSuccess){
         await commit('setEnergyManagement', response.data.entityData)
       } else {
+        alert(response.data.message)
         await commit('setEnergyManagement', [])
       }
     }catch( err ) {
@@ -88,31 +94,15 @@ export const actions = {
   },
   async getListCity({ commit, dispatch }){
     try {
-      /*const response = await this.$axios.post(
-        '/dev-api/io/1.0/expert/calculator/skills/' + uuid,
-        data[0]
-      )*/
-      let data = [
-        {
-          id: 1,
-          title: 'Test 1',
-          image: 'Test 1 İmage',
-          status: true,
-        },
-        {
-          id: 2,
-          title: 'Test 2',
-          image: 'Test 2 İmage',
-          status: true,
-        },
-        {
-          id: 3,
-          title: 'Test 3',
-          image: 'Test 3 İmage',
-          status: false,
-        },
-      ]
-      await commit('setCities', data)
+      const response = await this.$axios.get(
+        '/MobilCity/Get'
+      )
+      if (response.data.isSuccess){
+        await commit('setCities', response.data.entityData)
+      } else {
+        alert(response.data.message)
+        await commit('setCities', [])
+      }
     }catch( err ) {
       alert(err)
     }
@@ -154,6 +144,7 @@ export const actions = {
       if (response.data.isSuccess){
         await commit('setUpdateData', response.data.entityData)
       } else {
+        alert(response.data.message)
         await commit('setUpdateData', [])
       }
     }catch( err ) {
@@ -166,6 +157,7 @@ export const actions = {
       if (response.data.isSuccess){
         await commit('setUpdateData', response.data.entityData)
       } else {
+        alert(response.data.message)
         await commit('setUpdateData', [])
       }
     }catch( err ) {
@@ -178,6 +170,7 @@ export const actions = {
       if (response.data.isSuccess){
         await commit('setUpdateData', response.data.entityData)
       } else {
+        alert(response.data.message)
         await commit('setUpdateData', [])
       }
     }catch( err ) {
@@ -186,18 +179,15 @@ export const actions = {
   },
   async getCityById({ commit, dispatch }, id){
     try {
-      /*const response = await this.$axios.post(
-        '/dev-api/io/1.0/expert/calculator/skills/' + uuid,
-        data[0]
-      )*/
-      let data = this.state.cities
-      let response = null
-      data.forEach(function(item){
-        if (item.id == id){
-          response = item
-        }
-      })
-      await commit('setUpdateData', response)
+      const response = await this.$axios.get(
+        '/MobilCity/GetById?id=' + id,
+      )
+      if (response.data.isSuccess){
+        await commit('setUpdateData', response.data.entityData)
+      } else {
+        alert(response.data.message)
+        await commit('setUpdateData', [])
+      }
     }catch( err ) {
       alert(err)
     }
@@ -225,8 +215,11 @@ export const actions = {
       const response = await this.$axios.post(
         '/Sss/Add', payload
       )
-      console.log(payload)
-      await dispatch('getListSSS')
+      if (response.data.isSuccess){
+        await dispatch('getListSSS')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
@@ -251,29 +244,39 @@ export const actions = {
       const response = await this.$axios.post(
         '/EnerjiYonetimi/Add', payload
       )
-      await dispatch('getEnergyItems')
+      if (response.data.isSuccess){
+        await dispatch('getEnergyItems')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
   },
   async addCity({ commit, dispatch }, payload){
     try {
-      /*const response = await this.$axios.post(
-        '/City/Add', payload
-      )*/
-      console.log(payload)
-      await dispatch('getListCity')
+      const response = await this.$axios.post(
+        '/MobilCity/Add', payload
+      )
+      if (response.data.isSuccess){
+        await dispatch('getListCity')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
   },
   async updateEnergyModel({ commit, dispatch }, payload){
     try {
-      /*const response = await this.$axios.post(
+      const response = await this.$axios.post(
         '/EnerjiYonetimi/Update', payload
-      )*/
-      console.log(payload)
-      await dispatch('getEnergyItems')
+      )
+      if (response.data.isSuccess){
+        await dispatch('getEnergyItems')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
@@ -283,7 +286,11 @@ export const actions = {
       const response = await this.$axios.post(
         '/News/Update', payload
       )
-      await dispatch('getListNews')
+      if (response.data.isSuccess){
+        await dispatch('getListNews')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
@@ -293,17 +300,25 @@ export const actions = {
       const response = await this.$axios.post(
         '/Sss/Update', payload
       )
-      await dispatch('getListSSS')
+      if (response.data.isSuccess){
+        await dispatch('getListSSS')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
   },
   async updateCity({ commit, dispatch }, payload){
     try {
-      /*const response = await this.$axios.post(
-        '/City/Update', payload
-      )*/
-      await dispatch('getListCity')
+      const response = await this.$axios.post(
+        '/MobilCity/Update', payload
+      )
+      if (response.data.isSuccess){
+        await dispatch('getListCity')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
@@ -331,43 +346,56 @@ export const actions = {
   },
   async deleteSSS({ commit, dispatch }, id){
     try {
-      const response = await this.$axios.delete(
+      const response = await this.$axios.post(
         '/Sss/Remove?id=' + id,
       )
-      await dispatch('getListSSS')
+      if (response.data.isSuccess){
+        await dispatch('getListSSS')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
   },
   async deleteNews({ commit, dispatch }, id){
     try {
-      const response = await this.$axios.delete(
-        '/Sss/Remove?id=' + id,
+      const response = await this.$axios.post(
+        '/News/Remove?id=' + id,
       )
-      console.log(id)
-      await dispatch('getListNews')
+      if (response.data.isSuccess){
+        await dispatch('getListNews')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
   },
   async deleteEnergyItem({ commit, dispatch }, id){
     try {
-      const response = await this.$axios.delete(
-        '/Sss/Remove?id=' + id,
+      const response = await this.$axios.post(
+        '/EnerjiYonetimi/Remove?id=' + id,
       )
-      console.log(id)
-      await dispatch('getEnergyItems')
+      if (response.data.isSuccess){
+        await dispatch('getEnergyItems')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
   },
   async deleteCity({ commit, dispatch }, id){
     try {
-      /*const response = await this.$axios.delete(
-        '/Sss/Remove/' + id,
-      )*/
-      console.log(id)
-      await dispatch('getListCity')
+      const response = await this.$axios.post(
+        '/MobilCity/Remove?id=' + id,
+      )
+      if (response.data.isSuccess){
+        await dispatch('getListCity')
+      }else {
+        alert(response.data.message)
+      }
     }catch( err ) {
       alert(err)
     }
@@ -393,8 +421,7 @@ export const actions = {
           }
         }
       )
-      console.log(response.data)
-      await commit('setUploadImage', response.data)
+      await commit('setUploadImage', response.data.name)
     }catch( err ) {
       alert(err)
     }

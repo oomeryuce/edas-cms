@@ -90,21 +90,28 @@ export default {
   computed: {
     ...mapState({
       updateData: (state) => state.updateData,
+      uploadedImage: (state) => state.uploadedImage,
     }),
   },
   async beforeMount() {
     await this.getCityById(this.$route.params.id)
-    this.form.title = this.updateData.title
-    this.form.image = this.updateData.image
-    this.form.status = this.updateData.status
+    this.form.title = this.updateData.cityName
+    this.form.image = this.updateData.picture
+    //this.form.status = this.updateData.status
   },
   methods: {
     ...mapActions({
       getCityById: 'getCityById',
       updateCity: 'updateCity',
+      uploadImage: 'uploadImage',
     }),
     createUrl(file){
       if (file) {
+        let data = new FormData();
+        data.append('uploadType', "2");
+        data.append('file', file);
+        this.uploadImage(data)
+
         this.url = URL.createObjectURL(file)
         let img = new Image()
         img.src = URL.createObjectURL(file)
@@ -112,7 +119,6 @@ export default {
           if (img.width / img.height === 1) {
             return true;
           }
-          this.valid = false
           alert("Resmin Genişlik ve Yüksekliği eşit(kare resim) olmalıdır.");
           return true;
         }
@@ -126,7 +132,12 @@ export default {
         this.loading = false
         return false
       }
-      await this.updateCity(this.form)
+      let payload = {
+        id: this.$route.params.id,
+        cityName: this.form.title,
+        picture: this.uploadedImage ? this.uploadedImage : this.form.image
+      }
+      await this.updateCity(payload)
       this.loading = false
       await this.$router.push("/sehirler")
     }

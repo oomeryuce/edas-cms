@@ -137,6 +137,7 @@ export default {
     async postDelete(id){
       await this.$emit('delete-action', id)
       this.modalData.show = false
+      this.modalData.item.id = null
     },
     openModal(item){
       this.modalData.item.id = item.id

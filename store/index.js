@@ -417,11 +417,12 @@ export const actions = {
         '/Users/Upload', payload,
         {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
           }
         }
       )
-      await commit('setUploadImage', response.data.name)
+      console.log(response.data)
+      await commit('setUploadImage', response.data.fileName)
     }catch( err ) {
       alert(err)
     }

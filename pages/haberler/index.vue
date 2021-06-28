@@ -9,7 +9,7 @@
             type="table-heading, list-item-two-line, table-tfoot"
           ></v-skeleton-loader>
         </div>
-        <list-table v-else :headers="headers" :items="news" @delete-action="deleteAction"/>
+        <list-table v-else type="haberler" :headers="headers" :items="news" @delete-action="deleteAction"/>
       </page-custom>
     </v-col>
   </v-row>

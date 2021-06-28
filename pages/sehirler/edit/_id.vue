@@ -98,6 +98,8 @@ export default {
     this.form.title = this.updateData.cityName
     this.form.image = this.updateData.picture
     //this.form.status = this.updateData.status
+    this.url = 'http://testcms.firatedas.com.tr/iller/' + this.updateData.image
+    this.rules.image = []
   },
   methods: {
     ...mapActions({
@@ -107,9 +109,10 @@ export default {
     }),
     createUrl(file){
       if (file) {
-        let data = new FormData();
-        data.append('uploadType', "2");
-        data.append('file', file);
+        let data = {
+          uploadType: 2,
+          file: file
+        }
         this.uploadImage(data)
 
         this.url = URL.createObjectURL(file)

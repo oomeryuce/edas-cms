@@ -11,6 +11,15 @@
           {{ redesignText(item.question, 50) }}
         </div>
       </template>
+      <template v-slot:item.pictureUri="{ item }">
+        <img class="d-flex items-center" :src="'http://testcms.firatedas.com.tr/'+ type +'/' + item.pictureUri" alt="" height="40px">
+      </template>
+      <template v-slot:item.picture="{ item }">
+        <img class="d-flex items-center" :src="'http://testcms.firatedas.com.tr/'+ type +'/' + item.picture" alt="" height="40px">
+      </template>
+      <template v-slot:item.iconUri="{ item }">
+        <img class="d-flex items-center" :src="'http://testcms.firatedas.com.tr/'+ type +'/' + item.iconUri" alt="" height="40px">
+      </template>
       <template v-slot:item.answer="{ item }">
         <div :title="item.answer">
           {{ redesignText(item.answer, 100) }}
@@ -105,7 +114,7 @@
 import { mapActions, mapState } from "vuex";
 
 export default {
-  props: ['headers', 'items'],
+  props: ['headers', 'items', 'type'],
   data() {
     return {
       modalData: {

@@ -198,7 +198,6 @@ export default {
   async beforeMount() {
     await this.getEnergyById(this.$route.params.id)
     this.form.title = this.updateData.name
-    this.form.icon = this.updateData.iconUri
     this.form.consumption = this.updateData.tuketimW
     this.form.hourly = this.updateData.saatlikTuketim
     this.form.hourlyCost = this.updateData.saatlikTuketimTL
@@ -206,6 +205,9 @@ export default {
     this.form.weekly = this.updateData.haftalikKullanilanGun
     this.form.yearly = this.updateData.yildaKullanilanAy
     this.form.status = this.updateData.aylikTuketimTL
+    this.form.icon = this.updateData.iconUri
+    this.url = 'http://testcms.firatedas.com.tr/enerji-yonetimi/' + this.updateData.iconUri
+    this.rules.icon = []
   },
   methods: {
     ...mapActions({

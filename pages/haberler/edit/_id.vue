@@ -125,8 +125,10 @@ export default {
     this.form.title = this.updateData.title
     this.form.content = this.updateData.contentHtml
     this.form.link = this.updateData.link
-    this.form.image = this.updateData.pictureUri
     this.form.status = this.updateData.status
+    this.form.image = this.updateData.pictureUri
+    this.url = 'http://testcms.firatedas.com.tr/haberler/' + this.updateData.pictureUri
+    this.rules.image = []
   },
   methods: {
     ...mapActions({
@@ -136,6 +138,7 @@ export default {
     }),
     createUrl(file){
       if (file) {
+        console.log(file)
         let data = new FormData();
         data.append('uploadType', "1");
         data.append('file', file);

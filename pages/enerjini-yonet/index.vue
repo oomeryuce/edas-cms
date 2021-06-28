@@ -9,7 +9,7 @@
             type="table-heading, list-item-two-line, table-tfoot"
           ></v-skeleton-loader>
         </div>
-        <list-table v-else :headers="headers" :items="energyManagement" @delete-action="deleteAction"/>
+        <list-table v-else type="enerji-yonetimi" :headers="headers" :items="energyManagement" @delete-action="deleteAction"/>
       </page-custom>
     </v-col>
   </v-row>

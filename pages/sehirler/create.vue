@@ -100,10 +100,16 @@ export default {
     }),
     createUrl(file){
       if (file) {
+        let updatedFilename = file.name + (new Date().getTime())
+        Object.defineProperty(file, 'name', {
+          writable: true,
+          value: updatedFilename
+        });
         let data = new FormData();
         data.append('uploadType', "2");
         data.append('file', file);
-        this.uploadImage(data)
+        console.log(file)
+        //this.uploadImage(data)
 
         this.url = URL.createObjectURL(file)
         let img = new Image()

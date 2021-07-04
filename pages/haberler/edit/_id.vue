@@ -127,7 +127,7 @@ export default {
     this.form.link = this.updateData.link
     this.form.status = this.updateData.status
     this.form.image = this.updateData.pictureUri
-    this.url = 'http://testcms.firatedas.com.tr/haberler/' + this.updateData.pictureUri
+    this.url = 'http://testcms.firatedas.com.tr/enerji-yonetimi/' + this.updateData.pictureUri
     this.rules.image = []
   },
   methods: {

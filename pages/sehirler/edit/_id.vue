@@ -98,7 +98,7 @@ export default {
     this.form.title = this.updateData.cityName
     this.form.image = this.updateData.picture
     //this.form.status = this.updateData.status
-    this.url = 'http://testcms.firatedas.com.tr/iller/' + this.updateData.image
+    this.url = 'http://testcms.firatedas.com.tr/enerji-yonetimi/' + this.updateData.picture
     this.rules.image = []
   },
   methods: {
@@ -109,10 +109,9 @@ export default {
     }),
     createUrl(file){
       if (file) {
-        let data = {
-          uploadType: 2,
-          file: file
-        }
+        let data = new FormData();
+        data.append('uploadType', "2");
+        data.append('file', file);
         this.uploadImage(data)
 
         this.url = URL.createObjectURL(file)

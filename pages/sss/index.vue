@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Sıkça Sorulan Sorular(SSS)" :create="true" :full="false">
+      <page-custom title="Sıkça Sorulan Sorular(SSS)" :create="true" :full="true">
         <div v-if="!sss" class="pa-5 d-flex justify-center">
           <v-skeleton-loader
             class="mx-auto"

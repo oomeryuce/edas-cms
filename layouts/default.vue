@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
   middleware: 'auth',
   data () {
@@ -126,10 +127,24 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'EDAŞ İçerik Yönetim Sistemi'
+      title: null
+    }
+  },
+  computed: {
+    ...mapGetters(['loggedInUser', 'whatBrand'])
+  },
+  beforeMount() {
+    this.title = this.whatBrand + ' İçerik Yönetim Sistemi'
+    if (this.whatBrand === 'Çoruh Edaş'){
+      this.getBrand('coruh')
+    } else {
+      this.getBrand('firat')
     }
   },
   methods: {
+    ...mapActions({
+      getBrand: 'getBrand',
+    }),
     async logout() {
       await this.$auth.logout();
     },

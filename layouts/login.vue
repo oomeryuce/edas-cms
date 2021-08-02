@@ -6,7 +6,7 @@
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title class="font-weight-bold">EDAŞ İçerik Yönetim Sistemi</v-toolbar-title>
+                <v-toolbar-title class="font-weight-bold">{{ title }}</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form v-model="valid">
@@ -51,10 +51,13 @@
   </v-app>
 </template>
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "login",
   data() {
     return {
+      title: '',
       valid: false,
       email: null,
       password: null,
@@ -70,9 +73,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['whatBrand'])
+  },
+  beforeMount() {
+    this.title = this.whatBrand + ' İçerik Yönetim Sistemi'
+  },
   methods: {
     async submit() {
-      console.log([this.email, this.password])
       try {
         await this.$auth.loginWith('local', {
           data: {
@@ -82,7 +90,11 @@ export default {
         })
         await this.$router.push('/')
       } catch (e) {
-        this.error = e.response.data.message
+        if (e.response) {
+          this.error = e.response.data.message
+        }else {
+          this.error = e
+        }
       }
     }
   }

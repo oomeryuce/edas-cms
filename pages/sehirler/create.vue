@@ -12,7 +12,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="6" md="8" sm="12" class="d-flex px-0">
+            <v-col cols="12" lg="6" md="8" sm="12" class="row">
               <v-col cols="12" lg="8" md="10" sm="12" class="d-flex flex-column">
                 <v-file-input
                   v-model="form.image"
@@ -28,15 +28,8 @@
                 <small class="text--secondary">*Maksimum resim boyutu 10MB.</small>
               </v-col>
               <v-col cols="12" lg="4" md="2" sm="12">
-                <v-img max-width="150" v-show="form.image" id="image" :src="url" transition="scale-transition"></v-img>
+                <v-img max-width="150" max-height="200" v-show="form.image" id="image" :src="url" contain transition="scale-transition"></v-img>
               </v-col>
-            </v-col>
-            <v-col cols="12" lg="3" md="4" sm="6">
-              <v-switch
-                v-model="form.status"
-                inset
-                label="Yayımlanma Durumu"
-              ></v-switch>
             </v-col>
             <v-col cols="12" class="d-flex justify-end">
               <v-btn color="error" class="mx-5" to="/sehirler" :loading="loading">
@@ -58,6 +51,42 @@
         <span class="font-weight-bold">Lütfen zorunlu alanları doldurunuz.</span>
       </v-snackbar>
     </v-col>
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Resim Ölçü Uyarısı
+        </v-card-title>
+
+        <v-card-text>
+          Bu resmin ölçüleri standartların dışındadır, devam etmek istediğinize emin misiniz? <br>
+          Standart ölçüler: <br>
+          *Resim ölçüleri 70x70(kare) 72 dpi olmalıdır.
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="red darken-1"
+            text
+            @click.stop="cancelImage()"
+          >
+            İptal
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            text
+            @click.stop="uploadFile(image)"
+          >
+            Devam Et
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 <script>
@@ -68,8 +97,9 @@ export default {
     return {
       loading: false,
       valid: false,
+      dialog: false,
       url: null,
-      isOk: false,
+      image: null,
       error: false,
       rules: {
         title: [
@@ -84,7 +114,6 @@ export default {
       form: {
         title: '',
         image: null,
-        status: false
       }
     }
   },
@@ -98,31 +127,36 @@ export default {
       addCity: 'addCity',
       uploadImage: 'uploadImage',
     }),
+    cancelImage(){
+      this.dialog = false
+      this.url = null
+      this.file = null
+      this.form.image = null
+    },
+    async uploadFile(file){
+      this.url = URL.createObjectURL(file)
+      let data = new FormData();
+      data.append('uploadType', "2");
+      data.append('file', file);
+      await this.uploadImage(data)
+      this.dialog = false
+    },
     createUrl(file){
       if (file) {
-        let updatedFilename = file.name + (new Date().getTime())
-        Object.defineProperty(file, 'name', {
-          writable: true,
-          value: updatedFilename
-        });
-        let data = new FormData();
-        data.append('uploadType', "2");
-        data.append('file', file);
-        console.log(file)
-        //this.uploadImage(data)
-
-        this.url = URL.createObjectURL(file)
         let img = new Image()
         img.src = URL.createObjectURL(file)
         img.onload = () => {
           if (img.width / img.height === 1) {
+            this.url = URL.createObjectURL(file)
+            this.uploadFile(file)
             return true;
+          }else {
+            this.image = file
+            this.dialog = true
           }
-          alert("Resmin Genişlik ve Yüksekliği eşit(kare resim) olmalıdır.");
           return true;
         }
       }
-      return this.isOk
     },
     async submit(){
       this.loading = true
@@ -140,9 +174,6 @@ export default {
       this.loading = false
       await this.$router.push("/sehirler")
     },
-    setIsOk(value){
-      this.isOk = value
-    }
   }
 }
 </script>

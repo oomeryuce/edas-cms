@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Bildirimler" :create="true">
+      <page-custom title="Bildirimler" :create="true" :full="true">
         <list-table :headers="headers" :items="notifications" @delete-action="deleteAction">
           <template v-slot:operations="{ item }">
             <v-btn color="primary" @click="openModal(item)" small :disabled="item.sentDate && item.sentDate.length > 0" class="mr-2">

@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Haberler" :create="true" :full="false">
+      <page-custom title="Haberler" :create="true" :full="true">
         <div v-if="!news" class="pa-5 d-flex justify-center">
           <v-skeleton-loader
             class="mx-auto"
@@ -43,7 +43,6 @@ export default {
   },
   async beforeMount() {
     await this.getListNews();
-    await console.log(this.news);
   },
   methods: {
     ...mapActions({

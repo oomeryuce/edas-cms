@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <page-custom title="Şehirler" :create="true">
+      <page-custom title="Şehirler" :create="true" :full="true">
         <div v-if="!cities" class="pa-5 d-flex justify-center">
           <v-skeleton-loader
             class="mx-auto"
@@ -29,7 +29,6 @@ export default {
           value: 'cityName',
         },
         { text: 'Resim', value: 'picture' },
-        { text: 'Durum', value: 'status' },
         { text: 'İşlemler', value: 'operations', sortable: false, align: 'right' },
       ],
     }
@@ -41,7 +40,6 @@ export default {
   },
   async beforeMount() {
     await this.getListCity();
-    console.log(this.cities);
   },
   methods: {
     ...mapActions({

@@ -68,6 +68,12 @@ export default {
           icon: 'mdi-city',
           title: 'Şehirler',
           to: '/sehirler'
+        },
+        {
+          order: 4,
+          icon: 'mdi-bell-ring',
+          title: 'Bildirimler',
+          to: '/bildirimler'
         }
       ],
     }

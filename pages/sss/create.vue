@@ -115,7 +115,8 @@ export default {
         question: this.form.question,
         answer: this.form.answer,
         sTypeId: this.form.sType,
-        company: process.env.NUXT_ENV_COMPANY
+        company: process.env.NUXT_ENV_COMPANY,
+        status: this.form.status
       }
       await this.addSSS(payload)
       this.loading = false

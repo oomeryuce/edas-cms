@@ -28,7 +28,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="6" md="8" sm="12" class="d-flex px-0">
+            <v-col cols="12" lg="6" md="8" sm="12" class="row">
               <v-col cols="12" lg="8" md="10" sm="12" class="d-flex flex-column">
                 <v-file-input
                   v-model="form.image"
@@ -44,7 +44,7 @@
                 <small class="text--secondary">*Maksimum resim boyutu 10MB.</small>
               </v-col>
               <v-col cols="12" lg="4" md="2" sm="12">
-                <v-img max-width="150" v-show="form.image" :src="url" transition="scale-transition"></v-img>
+                <v-img max-width="150" max-height="200" v-show="form.image" :src="url" contain transition="scale-transition"></v-img>
               </v-col>
             </v-col>
             <v-col cols="12" lg="3" md="4" sm="6">
@@ -73,6 +73,42 @@
       >
         <span class="font-weight-bold">Lütfen zorunlu alanları doldurunuz.</span>
       </v-snackbar>
+      <v-dialog
+        v-model="dialog"
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            Resim Ölçü Uyarısı
+          </v-card-title>
+
+          <v-card-text>
+            Bu resmin ölçüleri standartların dışındadır, devam etmek istediğinize emin misiniz? <br>
+            Standart ölçüler: <br>
+            *Resim ölçüleri 400x100(4 e 1) olmalıdır.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              color="red darken-1"
+              text
+              @click.stop="cancelImage()"
+            >
+              İptal
+            </v-btn>
+
+            <v-btn
+              color="primary"
+              text
+              @click.stop="uploadFile(image)"
+            >
+              Devam Et
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-col>
   </v-row>
 </template>
@@ -84,7 +120,9 @@ export default {
     return {
       loading: false,
       valid: false,
+      dialog: false,
       url: null,
+      image: null,
       error: false,
       rules: {
         title: [
@@ -123,21 +161,33 @@ export default {
       addNews: 'addNews',
       uploadImage: 'uploadImage',
     }),
+    cancelImage(){
+      this.dialog = false
+      this.url = null
+      this.file = null
+      this.form.image = null
+    },
+    async uploadFile(file){
+      this.url = URL.createObjectURL(file)
+      let data = new FormData();
+      data.append('uploadType', "2");
+      data.append('file', file);
+      await this.uploadImage(data)
+      this.dialog = false
+    },
     createUrl(file){
       if (file) {
-        let data = new FormData();
-        data.append('uploadType', "1");
-        data.append('file', file);
-        this.uploadImage(data)
-
-        this.url = URL.createObjectURL(file)
         let img = new Image()
         img.src = URL.createObjectURL(file)
         img.onload = () => {
           if (img.width / img.height === 4) {
+            this.url = URL.createObjectURL(file)
+            this.uploadFile(file)
             return true;
+          }else {
+            this.image = file
+            this.dialog = true
           }
-          alert("Resmin Genişlik / Yükseklik oranı 4(örn. 400x100) olmalıdır.");
           return true;
         }
       }

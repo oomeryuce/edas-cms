@@ -99,7 +99,6 @@ export default {
   async beforeMount() {
     await this.getSTypes()
     await this.getSSSById(this.$route.params.id)
-    console.log(this.updateData)
     this.form.question = await this.updateData.question
     this.form.answer = await this.updateData.answer
     this.form.status = await this.updateData.status

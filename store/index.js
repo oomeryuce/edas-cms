@@ -7,8 +7,12 @@ export const state = () => ({
   cities:null,
   notifications: null,
   uploadedImage: null,
+  brand: null,
 })
 export const mutations = {
+  setBrand(state, payload) {
+    state.brand = payload
+  },
   setSSS(state, payload) {
     state.sss = payload
   },
@@ -38,8 +42,24 @@ export const getters = {
   isAuthenticated(state) {
     return state.auth.loggedIn
   },
+
+  loggedInUser(state) {
+    return state.auth.user
+  },
+
+  whatBrand() {
+    let domain = window.location.hostname
+    if (domain.includes('coruh')){
+      return 'Çoruh Edaş'
+    }else {
+      return 'Fırat Edaş'
+    }
+  },
 }
 export const actions = {
+  async getBrand({ commit }, brand){
+    await commit('setBrand', brand)
+  },
   async getListSSS({ commit, dispatch }){
     try {
       const response = await this.$axios.get('/Sss/Get')
@@ -229,7 +249,6 @@ export const actions = {
       const response = await this.$axios.post(
         '/News/Add', payload
       )
-      console.log(payload)
       if (response.data.isSuccess){
         await dispatch('getListNews')
       }else {
@@ -338,7 +357,6 @@ export const actions = {
       /*const response = await this.$axios.post(
         '/City/Add', payload
       )*/
-      console.log(payload)
       await dispatch('getListNotf')
     }catch( err ) {
       alert(err)
@@ -405,7 +423,6 @@ export const actions = {
       /*const response = await this.$axios.delete(
         '/Sss/Remove/' + id,
       )*/
-      console.log(id)
       await dispatch('getListNotf')
     }catch( err ) {
       alert(err)
@@ -421,7 +438,6 @@ export const actions = {
           }
         }
       )
-      console.log(response.data)
       await commit('setUploadImage', response.data.fileName)
     }catch( err ) {
       alert(err)
